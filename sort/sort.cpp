@@ -269,8 +269,88 @@ void ShellSort(T *arr, int n, cmp_func_t cmp_fn)
 /**********************************************
 ***************** Heap    Sort  ***************
 **********************************************/
+// 新加入结点，其父结点为(i-1) / 2
+void HeapFixUp(T *arr, int i, cmp_func_t cmp_fn)
+{
+  int j;
+  T temp;
+  // j 为i的父结点
+  for(j = (i-1)/2; j >= 0; j = (i-1)/2)
+  {
+    if( cmp_fn(temp, arr[j]) )
+    {
+      arr[i] = arr[j];  // 把较大(minHeap)/较小(maxHeap)的父结点往下移动，替换子结点
+      i = j;  // 更新当前结点为新结点索引
+    }
+    else
+      break;
+  }
+  arr[i] = temp;
+}
+
+// 在最小/大堆中加入新的数据num
+void HeapAddNumber(T *arr, int n, T num, cmp_func_t cmp_fn)
+{
+  arr[n] = num;
+  HeapFixUp(arr, n, cmp_fn);
+}
+
+//对a[i]进行自上而下的重建堆，n为结点总数,类似于插入排序 
+void HeapFixDown(T *arr, int i, int n, cmp_func_t cmp_fn)
+{
+  int j;
+  T temp = arr[i];
+  // j = 2*i + 1 为 i 的子结点
+  for(j = 2*i+1; j < n; j = 2*i+1)
+  {
+    if( j+1 < n && cmp_fn(arr[j+1], arr[j]) )
+    {
+      j = j + 1;  // 在左右结点中找到最小/最大的
+    }
+
+    if( cmp_fn(arr[j], temp) )
+    {
+      arr[i] = arr[j]; // 把较小(minHeap)/较大(maxHeap)的子结点往上移动，替换父结点
+      i = j;  // 更新当前结点为父结点索引
+    }
+    else
+    {
+      break;
+    }
+  }
+  arr[i] = temp;
+}
+
+//删除最顶端节点 
+void HeapDeleteElement(T *arr, int n, cmp_func_t cmp_fn)
+{
+  //交换
+  Swap(arr[0], arr[n-1]);
+  //删除
+  HeapFixDown(arr, 0, n-1, cmp_fn);
+}
+
+// 堆化数组建立堆
+void MakeHeap(T *arr, int n, cmp_func_t cmp_fn)
+{
+  int i;
+  // 从最后一个结点i=n-1的父节点(i-1)/2开始到root
+  for(i = n/2-1; i >= 0; i--)
+    HeapFixDown(arr, i, n, cmp_fn);
+}
+
+// !!!最小堆排序后是递减数组，要得到递增数组，可以使用最大堆
 void HeapSort(T *arr, int n, cmp_func_t cmp_fn)
 {
+  int i;
+  //堆化数组，建立堆
+  MakeHeap(arr, n, cmp_fn);
+  // 依次删除根，置于后面的有序区间，重新调整堆，类似选择排序
+  for(i = n-1; i >= 1; i--)
+  {
+    Swap(arr[i], arr[0]);
+    HeapFixDown(arr, 0, i, cmp_fn);
+  }
 
 }
 
@@ -288,7 +368,8 @@ int main()
   //MergeSort(a, temp, 0, n-1, cmp_less);
   //MergeSort2(a, temp, n, cmp_less);
   //QuickSort(a, 0, n-1, cmp_bigger);
-  ShellSort(a, n, cmp_less);
+  //ShellSort(a, n, cmp_less);
+  HeapSort(a, n, cmp_bigger);
   printArr(a, n);
   return 0;
 }
