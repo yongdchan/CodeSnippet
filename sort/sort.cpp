@@ -1,6 +1,10 @@
+<code>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+//using namespace std;
+
+//顺排 cmp_func_t(a, b) = a<b? 1:0;  
 
 
 typedef int T;
@@ -28,7 +32,8 @@ bool cmp_bigger(const T &leftData, const T &rightData)
 
 void printArr(T const *arr, int n)
 {
-  for(int i = 0; i < n; i++)
+  int i;
+  for(i = 0; i < n; i++)
   {
     printf("%d ", arr[i]);
   }
@@ -204,6 +209,34 @@ void MergeSort2(T *arr, T *temp, int n, cmp_func_t cmp_fn)
 /**********************************************
 ***************** Quick  Sort  ***************
 **********************************************/
+void QuickSort1(T *arr, int start, int end, cmp_func_t cmp_fn)
+{
+  if(start < end) {
+    int i = start, j = end;
+    T temp = arr[start];
+    while(i < j) {
+      // 从右向左找第一个小于/大于 temp 的数
+      while(i < j && cmp_fn(temp, arr[j]))
+        j--;
+      if(i < j) {
+        arr[i] = arr[j]; // 把j填到i坑，形成新的一个坑
+        i++;
+      }
+
+      while(i < j && cmp_fn(arr[i], temp)) // 从左向右找第一个大于/小于 temp 的数
+        i++;
+      if(i < j) {
+        arr[j] = arr[i];
+        j--;
+      }
+    }
+    arr[i] = temp;
+    QuickSort1(arr, start, i-1, cmp_fn);
+    QuickSort1(arr, i+1, end, cmp_fn);
+
+  }
+}
+
 int Partition(T *arr, int start, int end, cmp_func_t cmp_fn)
 {
   // 取中间值为轴值
@@ -239,6 +272,7 @@ void QuickSort(T *arr, int start, int end, cmp_func_t cmp_fn)
     QuickSort(arr, index+1, end, cmp_fn);
 
 }
+
 
 
 /**********************************************
@@ -354,10 +388,22 @@ void HeapSort(T *arr, int n, cmp_func_t cmp_fn)
 
 }
 
+
 int main()
 {
-  //int a[8] = {1, 1, 1, 1, 1, 1, 1, 1};
-  int a[5] = {25, 13, 51, 23, 7};
+  //int a[5] = {25, 13, 51, 23, 7};
+  //int a[5] = {1, 3, 6, 4, 7};
+
+  int a[84] = {11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
+    43, 23, 45, 64, 34, 21, 34, 34, 6, 1,
+    11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
+    43, 23, 45, 64, 34, 21, 34, 34, 6, 1,
+    11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
+    43, 23, 45, 64, 34, 21, 34, 34, 6, 1,
+    11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
+    43, 23, 45, 64, 34, 21, 34, 34, 6, 1};
+  //float a[5] = {1.3, 3.4, 0.0, 5.5, 2.2};
+  typedef float T;
   int n = sizeof(a) / sizeof(a[0]);
   T *temp = (T*)malloc(sizeof(T)*n);
 
@@ -368,8 +414,11 @@ int main()
   //MergeSort(a, temp, 0, n-1, cmp_less);
   //MergeSort2(a, temp, n, cmp_less);
   //QuickSort(a, 0, n-1, cmp_bigger);
+  QuickSort1(a, 0, n-1, cmp_less);
   //ShellSort(a, n, cmp_less);
-  HeapSort(a, n, cmp_bigger);
+  //HeapSort(a, n, cmp_less);
   printArr(a, n);
+
   return 0;
 }
+</code>
