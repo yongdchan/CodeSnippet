@@ -273,7 +273,7 @@ void ShellSort(T *arr, int n, cmp_func_t cmp_fn)
 void HeapFixUp(T *arr, int i, cmp_func_t cmp_fn)
 {
   int j;
-  T temp;
+  T temp = arr[i];
   // j 为i的父结点
   for(j = (i-1)/2; j >= 0; j = (i-1)/2)
   {
